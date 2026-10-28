@@ -6,10 +6,10 @@
     <meta name="author" content="符符">
     <title>上課啦！極限趕功課</title>
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: "Microsoft JhengHei", sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body {
-            background-color: #2c3e50;
-            color: #fff;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #f8fafc;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -20,126 +20,176 @@
         }
         #game-container {
             width: 100%;
-            max-width: 480px;
-            height: 700px;
-            background-color: #34495e;
-            border: 4px solid #f1c40f;
-            border-radius: 12px;
+            max-width: 440px;
+            height: 720px;
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
         }
         /* 老師視角區 */
         #teacher-zone {
-            height: 42%;
-            background: linear-gradient(to bottom, #1a252f, #2c3e50);
-            border-bottom: 4px dashed #e74c3c;
+            height: 40%;
+            background: linear-gradient(to bottom, rgba(15, 23, 42, 0.8), rgba(30, 41, 59, 0.4));
+            border-bottom: 2px dashed rgba(239, 68, 68, 0.5);
             position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
         }
         #teacher-avatar {
-            font-size: 70px;
-            transition: transform 0.2s;
+            font-size: 72px;
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
         }
         #teacher-status {
-            margin-top: 8px;
-            font-size: 18px;
-            font-weight: bold;
-            padding: 4px 12px;
-            border-radius: 20px;
-            background: rgba(0,0,0,0.4);
+            margin-top: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            padding: 6px 16px;
+            border-radius: 30px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            letter-spacing: 0.5px;
         }
-        .alert-bg { background: linear-gradient(to bottom, #78281f, #c0392b) !important; }
+        .alert-bg { 
+            background: linear-gradient(to bottom, rgba(127, 29, 29, 0.85), rgba(185, 28, 28, 0.5)) !important; 
+            border-bottom-color: #f87171 !important;
+        }
 
         /* 學生作業區 */
         #student-zone {
-            height: 58%;
-            background-color: #ecf0f1;
-            color: #2c3e50;
+            height: 60%;
+            background: rgba(248, 250, 252, 0.95);
+            color: #0f172a;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-around;
-            padding: 15px 20px;
+            justify-content: space-between;
+            padding: 24px 20px 16px 20px;
             position: relative;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
         }
         .stats {
             width: 100%;
             display: flex;
             justify-content: space-between;
-            font-size: 16px;
-            font-weight: bold;
+            font-size: 14px;
+            font-weight: 700;
+            color: #475569;
         }
+        
         /* 進度條 */
+        .progress-wrapper {
+            width: 100%;
+        }
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
         #progress-container {
             width: 100%;
-            background-color: #bdc3c7;
-            border-radius: 10px;
-            height: 22px;
+            background-color: #e2e8f0;
+            border-radius: 12px;
+            height: 16px;
             overflow: hidden;
-            border: 2px solid #7f8c8d;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
         }
         #progress-bar {
             width: 0%;
             height: 100%;
-            background-color: #2ecc71;
-            transition: width 0.1s;
-        }
-        /* 互動按鈕 */
-        #action-btn {
-            width: 100%;
-            padding: 18px;
-            font-size: 22px;
-            font-weight: bold;
-            color: white;
-            background-color: #e67e22;
-            border: none;
+            background: linear-gradient(90deg, #10b981, #059669);
             border-radius: 12px;
+            transition: width 0.1s ease;
+        }
+
+        /* 現代圓形點擊按鈕 */
+        .action-btn-container {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+        }
+        #action-btn {
+            width: 150px;
+            height: 150px;
+            font-size: 17px;
+            font-weight: 800;
+            color: white;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: none;
+            border-radius: 50%;
             cursor: pointer;
-            box-shadow: 0 6px #d35400;
-            transition: transform 0.05s, background-color 0.1s;
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+            transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        #action-btn span:first-child {
+            font-size: 32px;
         }
         #action-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px #d35400;
+            transform: scale(0.92);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3), inset 0 2px 2px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, #d97706, #b45309);
         }
+
         /* 作者署名 */
         .game-footer {
-            font-size: 12px;
-            color: #7f8c8d;
-            margin-top: -5px;
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 500;
         }
+
         /* 遮罩畫面 (開始/結束) */
         .screen-overlay {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(8px);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 10;
             text-align: center;
-            padding: 20px;
+            padding: 24px;
         }
-        .screen-overlay h1 { color: #f1c40f; margin-bottom: 15px; font-size: 26px; }
-        .screen-overlay p { color: #ecf0f1; margin-bottom: 25px; font-size: 15px; line-height: 1.5; }
+        .screen-overlay h1 { color: #f8fafc; margin-bottom: 12px; font-size: 24px; font-weight: 800; }
+        .screen-overlay p { color: #94a3b8; margin-bottom: 24px; font-size: 14px; line-height: 1.6; }
         .btn-start {
-            padding: 12px 30px;
-            font-size: 20px;
-            background-color: #2ecc71;
+            padding: 14px 36px;
+            font-size: 16px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #10b981, #059669);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 14px;
             cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 4px #27ae60;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+            transition: transform 0.1s, opacity 0.2s;
+        }
+        .btn-start:active {
+            transform: scale(0.96);
         }
         .hidden { display: none !important; }
     </style>
@@ -150,7 +200,7 @@
         <!-- 開始畫面 -->
         <div id="start-screen" class="screen-overlay">
             <h1>📝 上課啦！極限趕功課</h1>
-            <p>老師隨時會轉頭盯哨！<br>趁老師背對時狂按按鈕寫作業，<br>但老師轉頭時絕對不能動，否則會被沒收扣血！<br>在時間內把作業進度衝到 100% 吧！</p>
+            <p>老師隨時會轉頭盯哨！<br>趁老師背對時瘋狂點擊圓形按鈕寫作業，<br>但老師轉頭時絕對不能動，否則會被抓包扣血！<br>在時間內把作業進度衝到 100% 吧！</p>
             <button class="btn-start" onclick="startGame()">挑戰開始</button>
         </div>
 
@@ -170,18 +220,26 @@
         <!-- 學生作業區 -->
         <div id="student-zone">
             <div class="stats">
-                <span id="lives-display">❤️ 紅心：3 / 3</span>
-                <span id="time-display">⏱️ 剩餘時間：30s</span>
+                <span id="lives-display">❤️ 3 / 3</span>
+                <span id="time-display">⏱️ 30s</span>
             </div>
             
-            <div style="width: 100%;">
-                <div style="margin-bottom: 4px; font-size: 13px; font-weight: bold; color: #34495e;">作業完成進度</div>
+            <div class="progress-wrapper">
+                <div class="progress-label">
+                    <span>作業進度</span>
+                    <span id="progress-text">0%</span>
+                </div>
                 <div id="progress-container">
                     <div id="progress-bar"></div>
                 </div>
             </div>
 
-            <button id="action-btn" onclick="doHomework()">猛力趕功課！</button>
+            <div class="action-btn-container">
+                <button id="action-btn" onclick="doHomework()">
+                    <span>✍️</span>
+                    <span>狂寫作業</span>
+                </button>
+            </div>
 
             <div class="game-footer">🎮 遊戲製作：符符</div>
         </div>
@@ -203,9 +261,9 @@
         const teacherAvatar = document.getElementById('teacher-avatar');
         const teacherStatus = document.getElementById('teacher-status');
         const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
         const livesDisplay = document.getElementById('lives-display');
         const timeDisplay = document.getElementById('time-display');
-        const actionBtn = document.getElementById('action-btn');
         const startScreen = document.getElementById('start-screen');
         const gameOverScreen = document.getElementById('game-over-screen');
         const gameOverTitle = document.getElementById('game-over-title');
@@ -227,7 +285,7 @@
             gameState.timer = setInterval(() => {
                 if (!gameState.isPlaying) return;
                 gameState.timeLeft--;
-                timeDisplay.innerText = `⏱️ 剩餘時間：${gameState.timeLeft}s`;
+                timeDisplay.innerText = `⏱️ ${gameState.timeLeft}s`;
 
                 if (gameState.progress >= 100) {
                     endGame(true);
@@ -292,16 +350,17 @@
 
         function triggerFlash() {
             let container = document.getElementById('game-container');
-            container.style.borderColor = '#e74c3c';
+            container.style.borderColor = '#ef4444';
             setTimeout(() => {
-                container.style.borderColor = '#f1c40f';
+                container.style.borderColor = 'rgba(255, 255, 255, 0.1)';
             }, 200);
         }
 
         function updateUI() {
             progressBar.style.width = gameState.progress + '%';
-            livesDisplay.innerText = `❤️ 紅心：${gameState.lives} / 3`;
-            timeDisplay.innerText = `⏱️ 剩餘時間：${gameState.timeLeft}s`;
+            progressText.innerText = gameState.progress + '%';
+            livesDisplay.innerText = `❤️ ${gameState.lives} / 3`;
+            timeDisplay.innerText = `⏱️ ${gameState.timeLeft}s`;
         }
 
         function endGame(isWin) {
@@ -312,10 +371,10 @@
             gameOverScreen.classList.remove('hidden');
             if (isWin) {
                 gameOverTitle.innerText = "🎉 挑戰成功！完美趕完！";
-                gameOverDesc.innerText = `太神啦！你竟然在鐘聲響起前把作業歐趴交出去，免去了一頓排頭！`;
+                gameOverDesc.innerText = `太神啦！你成功在鐘聲響起前把作業歐趴交出去，免去了一頓排頭！`;
             } else {
                 gameOverTitle.innerText = "💥 慘遭當場沒收！";
-                gameOverDesc.innerText = gameState.lives <= 0 ? "因為太白目在老師盯哨時動手，作業直接被撕掉！" : "時間到啦！作業沒寫完，準備去導師室罰站吧！";
+                gameOverDesc.innerText = gameState.lives <= 0 ? "因為太白目在老師盯哨時動手，作業直接被當場沒收！" : "時間到啦！作業沒寫完，準備去導師室報到囉！";
             }
         }
     </script>
