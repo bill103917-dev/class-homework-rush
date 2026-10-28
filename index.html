@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="符符">
-    <title>上課啦！極限趕功課</title>
+    <title>上課啦！極限趕功課 - 升級挑戰版</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body {
@@ -21,7 +21,7 @@
         #game-container {
             width: 100%;
             max-width: 440px;
-            height: 720px;
+            height: 740px;
             background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
@@ -35,7 +35,7 @@
         }
         /* 老師視角區 */
         #teacher-zone {
-            height: 40%;
+            height: 38%;
             background: linear-gradient(to bottom, rgba(15, 23, 42, 0.8), rgba(30, 41, 59, 0.4));
             border-bottom: 2px dashed rgba(239, 68, 68, 0.5);
             position: relative;
@@ -46,15 +46,15 @@
             transition: all 0.3s ease;
         }
         #teacher-avatar {
-            font-size: 72px;
+            font-size: 68px;
             transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
         }
         #teacher-status {
-            margin-top: 10px;
-            font-size: 15px;
+            margin-top: 8px;
+            font-size: 14px;
             font-weight: 600;
-            padding: 6px 16px;
+            padding: 5px 14px;
             border-radius: 30px;
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -67,14 +67,14 @@
 
         /* 學生作業區 */
         #student-zone {
-            height: 60%;
+            height: 62%;
             background: rgba(248, 250, 252, 0.95);
             color: #0f172a;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            padding: 24px 20px 16px 20px;
+            padding: 20px 20px 14px 20px;
             position: relative;
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;
@@ -87,10 +87,20 @@
             font-weight: 700;
             color: #475569;
         }
+        .combo-badge {
+            background: #e0e7ff;
+            color: #4338ca;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
         
-        /* 進度條 */
+        /* 進度條與體力條 */
         .progress-wrapper {
             width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
         .progress-label {
             display: flex;
@@ -98,13 +108,12 @@
             font-size: 12px;
             font-weight: 700;
             color: #64748b;
-            margin-bottom: 6px;
         }
-        #progress-container {
+        #progress-container, #energy-container {
             width: 100%;
             background-color: #e2e8f0;
-            border-radius: 12px;
-            height: 16px;
+            border-radius: 10px;
+            height: 12px;
             overflow: hidden;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
         }
@@ -112,22 +121,29 @@
             width: 0%;
             height: 100%;
             background: linear-gradient(90deg, #10b981, #059669);
-            border-radius: 12px;
+            border-radius: 10px;
+            transition: width 0.1s ease;
+        }
+        #energy-bar {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+            border-radius: 10px;
             transition: width 0.1s ease;
         }
 
-        /* 現代圓形點擊按鈕 */
+        /* 圓形點擊按鈕 */
         .action-btn-container {
             flex-grow: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 10px 0;
+            margin: 6px 0;
         }
         #action-btn {
-            width: 150px;
-            height: 150px;
-            font-size: 17px;
+            width: 135px;
+            height: 135px;
+            font-size: 16px;
             font-weight: 800;
             color: white;
             background: linear-gradient(135deg, #f59e0b, #d97706);
@@ -135,22 +151,28 @@
             border-radius: 50%;
             cursor: pointer;
             box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4);
-            transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.2s;
+            transition: transform 0.08s ease, box-shadow 0.08s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 4px;
+            gap: 2px;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
         #action-btn span:first-child {
-            font-size: 32px;
+            font-size: 28px;
         }
         #action-btn:active {
             transform: scale(0.92);
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3), inset 0 2px 2px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
             background: linear-gradient(135deg, #d97706, #b45309);
+        }
+        #action-btn:disabled {
+            background: #94a3b8;
+            box-shadow: none;
+            cursor: not-allowed;
+            transform: none;
         }
 
         /* 作者署名 */
@@ -186,11 +208,9 @@
             border-radius: 14px;
             cursor: pointer;
             box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
-            transition: transform 0.1s, opacity 0.2s;
+            transition: transform 0.1s;
         }
-        .btn-start:active {
-            transform: scale(0.96);
-        }
+        .btn-start:active { transform: scale(0.96); }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -199,9 +219,9 @@
     <div id="game-container">
         <!-- 開始畫面 -->
         <div id="start-screen" class="screen-overlay">
-            <h1>📝 上課啦！極限趕功課</h1>
-            <p>老師隨時會轉頭盯哨！<br>趁老師背對時瘋狂點擊圓形按鈕寫作業，<br>但老師轉頭時絕對不能動，否則會被抓包扣血！<br>在時間內把作業進度衝到 100% 吧！</p>
-            <button class="btn-start" onclick="startGame()">挑戰開始</button>
+            <h1>🔥 上課啦！地獄趕功課特訓版</h1>
+            <p><strong>高難度挑戰：</strong><br>1. 老師會隨機使出「假動作回頭」陷阱！<br>2. 瘋狂狂按會消耗「手痠體力值」，歸零會短暫癱瘓！<br>3. 達成 Combo 保持高效率，趕快通關吧！</p>
+            <button class="btn-start" onclick="startGame()">開始地獄挑戰</button>
         </div>
 
         <!-- 遊戲結束畫面 -->
@@ -221,7 +241,8 @@
         <div id="student-zone">
             <div class="stats">
                 <span id="lives-display">❤️ 3 / 3</span>
-                <span id="time-display">⏱️ 30s</span>
+                <span id="combo-display" class="combo-badge">Combo: 0</span>
+                <span id="time-display">⏱️ 25s</span>
             </div>
             
             <div class="progress-wrapper">
@@ -231,6 +252,14 @@
                 </div>
                 <div id="progress-container">
                     <div id="progress-bar"></div>
+                </div>
+
+                <div class="progress-label" style="margin-top: 2px;">
+                    <span>手痠體力值</span>
+                    <span id="energy-text">100%</span>
+                </div>
+                <div id="energy-container">
+                    <div id="energy-bar"></div>
                 </div>
             </div>
 
@@ -247,14 +276,17 @@
 
     <script>
         let gameState = {
-            score: 0,
             lives: 3,
-            timeLeft: 30,
+            timeLeft: 25,
             progress: 0,
+            energy: 100,
+            combo: 0,
             isTeacherWatching: false,
+            isExhausted: false,
             isPlaying: false,
             timer: null,
-            teacherTimer: null
+            teacherTimer: null,
+            energyRecoveryTimer: null
         };
 
         const teacherZone = document.getElementById('teacher-zone');
@@ -262,8 +294,12 @@
         const teacherStatus = document.getElementById('teacher-status');
         const progressBar = document.getElementById('progress-bar');
         const progressText = document.getElementById('progress-text');
+        const energyBar = document.getElementById('energy-bar');
+        const energyText = document.getElementById('energy-text');
         const livesDisplay = document.getElementById('lives-display');
+        const comboDisplay = document.getElementById('combo-display');
         const timeDisplay = document.getElementById('time-display');
+        const actionBtn = document.getElementById('action-btn');
         const startScreen = document.getElementById('start-screen');
         const gameOverScreen = document.getElementById('game-over-screen');
         const gameOverTitle = document.getElementById('game-over-title');
@@ -274,10 +310,13 @@
             gameOverScreen.classList.add('hidden');
             
             gameState.lives = 3;
-            gameState.timeLeft = 30;
+            gameState.timeLeft = 25; // 縮短時間增加緊湊感
             gameState.progress = 0;
+            gameState.energy = 100;
+            gameState.combo = 0;
             gameState.isPlaying = true;
             gameState.isTeacherWatching = false;
+            gameState.isExhausted = false;
 
             updateUI();
 
@@ -285,13 +324,18 @@
             gameState.timer = setInterval(() => {
                 if (!gameState.isPlaying) return;
                 gameState.timeLeft--;
-                timeDisplay.innerText = `⏱️ ${gameState.timeLeft}s`;
+                
+                // 自然恢復體力
+                if (gameState.energy < 100 && !gameState.isExhausted) {
+                    gameState.energy = Math.min(100, gameState.energy + 4);
+                }
 
                 if (gameState.progress >= 100) {
                     endGame(true);
                 } else if (gameState.timeLeft <= 0) {
                     endGame(false);
                 }
+                updateUI();
             }, 1000);
 
             scheduleTeacherTurn();
@@ -300,49 +344,92 @@
         function scheduleTeacherTurn() {
             if (!gameState.isPlaying) return;
 
-            let waitTime = Math.random() * 2000 + 2000;
+            // 隨機等待時間（進度越高，老師轉頭越頻繁）
+            let waitRange = Math.max(1000, 2500 - (gameState.progress * 15));
+            let waitTime = Math.random() * 1500 + waitRange;
             
             gameState.teacherTimer = setTimeout(() => {
                 if (!gameState.isPlaying) return;
 
+                // 預警階段
                 teacherAvatar.innerText = "👀";
-                teacherStatus.innerText = "⚠️ 老師好像在轉頭了...";
+                teacherStatus.innerText = "⚠️ 老師頭好像在晃...";
 
                 setTimeout(() => {
                     if (!gameState.isPlaying) return;
-                    gameState.isTeacherWatching = true;
-                    teacherZone.classList.add('alert-bg');
-                    teacherAvatar.innerText = "😡";
-                    teacherStatus.innerText = "🛑 抓包！老師正在盯著你！";
+                    
+                    // 隨機產生「假動作」或「真實盯哨」
+                    let isFakeOut = Math.random() < 0.25; // 25% 機率是假動作
 
-                    let watchDuration = Math.random() * 1000 + 1500;
-                    setTimeout(() => {
-                        if (!gameState.isPlaying) return;
-                        gameState.isTeacherWatching = false;
-                        teacherZone.classList.remove('alert-bg');
-                        teacherAvatar.innerText = "👨‍🏫";
-                        teacherStatus.innerText = "✍️ 老師背對了，快抄！";
+                    if (isFakeOut) {
+                        // 假動作：轉過來看一眼馬上回去
+                        teacherZone.style.background = "linear-gradient(to bottom, rgba(127, 29, 29, 0.6), rgba(30, 41, 59, 0.4))";
+                        teacherAvatar.innerText = "🤨";
+                        teacherStatus.innerText = "❓ 假動作！虛驚一場...";
+                        
+                        setTimeout(() => {
+                            if (!gameState.isPlaying) return;
+                            teacherZone.style.background = "";
+                            teacherAvatar.innerText = "👨‍🏫";
+                            teacherStatus.innerText = "✍️ 趕快把握機會狂抄！";
+                            scheduleTeacherTurn();
+                        }, 600);
+                    } else {
+                        // 真實盯哨
+                        gameState.isTeacherWatching = true;
+                        teacherZone.classList.add('alert-bg');
+                        teacherAvatar.innerText = "😡";
+                        teacherStatus.innerText = "🛑 抓包！死死盯著你！";
 
-                        scheduleTeacherTurn();
-                    }, watchDuration);
+                        let watchDuration = Math.random() * 800 + 1200;
+                        setTimeout(() => {
+                            if (!gameState.isPlaying) return;
+                            gameState.isTeacherWatching = false;
+                            teacherZone.classList.remove('alert-bg');
+                            teacherAvatar.innerText = "👨‍🏫";
+                            teacherStatus.innerText = "✍️ 老師轉回去了，快抄！";
 
-                }, 600);
+                            scheduleTeacherTurn();
+                        }, watchDuration);
+                    }
+
+                }, 500);
 
             }, waitTime);
         }
 
         function doHomework() {
-            if (!gameState.isPlaying) return;
+            if (!gameState.isPlaying || gameState.isExhausted) return;
+
+            // 消耗體力
+            gameState.energy -= 6;
+            if (gameState.energy <= 0) {
+                gameState.energy = 0;
+                gameState.isExhausted = true;
+                actionBtn.disabled = true;
+                actionBtn.innerText = "手痠休息中...";
+                setTimeout(() => {
+                    if (!gameState.isPlaying) return;
+                    gameState.isExhausted = false;
+                    actionBtn.disabled = false;
+                    actionBtn.innerHTML = "<span>✍️</span><span>狂寫作業</span>";
+                }, 1200); // 體力耗盡癱瘓 1.2 秒
+            }
 
             if (gameState.isTeacherWatching) {
+                // 被抓包
                 gameState.lives--;
+                gameState.combo = 0;
                 triggerFlash();
-                teacherStatus.innerText = "💥 被抓包！扣一顆紅心！";
+                teacherStatus.innerText = "💥 被抓包！扣一顆心！";
                 if (gameState.lives <= 0) {
                     endGame(false);
                 }
             } else {
-                gameState.progress += 4;
+                // 順利抄寫，根據 Combo 額外加分
+                gameState.combo++;
+                let gain = 3 + Math.floor(gameState.combo / 5);
+                gameState.progress += gain;
                 if (gameState.progress > 100) gameState.progress = 100;
             }
             updateUI();
@@ -359,7 +446,10 @@
         function updateUI() {
             progressBar.style.width = gameState.progress + '%';
             progressText.innerText = gameState.progress + '%';
+            energyBar.style.width = gameState.energy + '%';
+            energyText.innerText = gameState.energy + '%';
             livesDisplay.innerText = `❤️ ${gameState.lives} / 3`;
+            comboDisplay.innerText = `Combo: ${gameState.combo}`;
             timeDisplay.innerText = `⏱️ ${gameState.timeLeft}s`;
         }
 
@@ -370,11 +460,11 @@
 
             gameOverScreen.classList.remove('hidden');
             if (isWin) {
-                gameOverTitle.innerText = "🎉 挑戰成功！完美趕完！";
-                gameOverDesc.innerText = `太神啦！你成功在鐘聲響起前把作業歐趴交出去，免去了一頓排頭！`;
+                gameOverTitle.innerText = "🏆 完美神速通關！";
+                gameOverDesc.innerText = `太強了！在充滿假動作與手痠危機的地獄難度下竟然還能歐趴交卷，符符頒發你「抄霸」稱號！`;
             } else {
-                gameOverTitle.innerText = "💥 慘遭當場沒收！";
-                gameOverDesc.innerText = gameState.lives <= 0 ? "因為太白目在老師盯哨時動手，作業直接被當場沒收！" : "時間到啦！作業沒寫完，準備去導師室報到囉！";
+                gameOverTitle.innerText = "💥 挑戰失敗！";
+                gameOverDesc.innerText = gameState.lives <= 0 ? "太輕敵了！被老師抓到直接沒收作業，回家吃竹筍炒肉絲！" : "時間到啦！手太痠加上進度沒趕完，只能去罰站了！";
             }
         }
     </script>
