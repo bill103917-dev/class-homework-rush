@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="符符">
-    <title>上課啦！極限趕功課 - 升級挑戰版</title>
+    <title>上課啦！極限趕功課 - 嚴格精準版</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         body {
@@ -219,9 +219,9 @@
     <div id="game-container">
         <!-- 開始畫面 -->
         <div id="start-screen" class="screen-overlay">
-            <h1>🔥 上課啦！地獄趕功課特訓版</h1>
-            <p><strong>高難度挑戰：</strong><br>1. 老師會隨機使出「假動作回頭」陷阱！<br>2. 瘋狂狂按會消耗「手痠體力值」，歸零會短暫癱瘓！<br>3. 達成 Combo 保持高效率，趕快通關吧！</p>
-            <button class="btn-start" onclick="startGame()">開始地獄挑戰</button>
+            <h1>🔥 上課啦！嚴格精準特訓版</h1>
+            <p><strong>遊戲規則：</strong><br>1. 老師轉頭動作放慢，提供更清楚的判斷時間。<br>2. <strong>零延遲判定：</strong>只要老師進入「死死盯著你」的紅光狀態，瞬間點擊就會被立刻抓包扣心！<br>3. 注意手痠體力值，適時休息！</p>
+            <button class="btn-start" onclick="startGame()">開始挑戰</button>
         </div>
 
         <!-- 遊戲結束畫面 -->
@@ -285,8 +285,7 @@
             isExhausted: false,
             isPlaying: false,
             timer: null,
-            teacherTimer: null,
-            energyRecoveryTimer: null
+            teacherTimer: null
         };
 
         const teacherZone = document.getElementById('teacher-zone');
@@ -310,7 +309,7 @@
             gameOverScreen.classList.add('hidden');
             
             gameState.lives = 3;
-            gameState.timeLeft = 25; // 縮短時間增加緊湊感
+            gameState.timeLeft = 25;
             gameState.progress = 0;
             gameState.energy = 100;
             gameState.combo = 0;
@@ -325,7 +324,6 @@
                 if (!gameState.isPlaying) return;
                 gameState.timeLeft--;
                 
-                // 自然恢復體力
                 if (gameState.energy < 100 && !gameState.isExhausted) {
                     gameState.energy = Math.min(100, gameState.energy + 4);
                 }
@@ -344,26 +342,24 @@
         function scheduleTeacherTurn() {
             if (!gameState.isPlaying) return;
 
-            // 隨機等待時間（進度越高，老師轉頭越頻繁）
-            let waitRange = Math.max(1000, 2500 - (gameState.progress * 15));
+            let waitRange = Math.max(1000, 2600 - (gameState.progress * 15));
             let waitTime = Math.random() * 1500 + waitRange;
             
             gameState.teacherTimer = setTimeout(() => {
                 if (!gameState.isPlaying) return;
 
-                // 預警階段
+                // 稍微放慢預警階段的節奏 (從 500ms 延長至 800ms)
                 teacherAvatar.innerText = "👀";
                 teacherStatus.innerText = "⚠️ 老師頭好像在晃...";
 
                 setTimeout(() => {
                     if (!gameState.isPlaying) return;
                     
-                    // 隨機產生「假動作」或「真實盯哨」
-                    let isFakeOut = Math.random() < 0.25; // 25% 機率是假動作
+                    let isFakeOut = Math.random() < 0.28; // 28% 機率是假動作
 
                     if (isFakeOut) {
-                        // 假動作：轉過來看一眼馬上回去
-                        teacherZone.style.background = "linear-gradient(to bottom, rgba(127, 29, 29, 0.6), rgba(30, 41, 59, 0.4))";
+                        // 假動作：放慢速度讓玩家看清楚是虛驚一場
+                        teacherZone.style.background = "linear-gradient(to bottom, rgba(127, 29, 29, 0.5), rgba(30, 41, 59, 0.4))";
                         teacherAvatar.innerText = "🤨";
                         teacherStatus.innerText = "❓ 假動作！虛驚一場...";
                         
@@ -373,9 +369,9 @@
                             teacherAvatar.innerText = "👨‍🏫";
                             teacherStatus.innerText = "✍️ 趕快把握機會狂抄！";
                             scheduleTeacherTurn();
-                        }, 600);
+                        }, 900); // 假動作停留時間稍微拉長一點點，比較好辨別
                     } else {
-                        // 真實盯哨
+                        // 真實盯哨：一瞬間立刻生效，零延遲判定！
                         gameState.isTeacherWatching = true;
                         teacherZone.classList.add('alert-bg');
                         teacherAvatar.innerText = "😡";
@@ -393,7 +389,7 @@
                         }, watchDuration);
                     }
 
-                }, 500);
+                }, 800); // 預警時間拉長，放慢節奏
 
             }, waitTime);
         }
@@ -413,11 +409,11 @@
                     gameState.isExhausted = false;
                     actionBtn.disabled = false;
                     actionBtn.innerHTML = "<span>✍️</span><span>狂寫作業</span>";
-                }, 1200); // 體力耗盡癱瘓 1.2 秒
+                }, 1200);
             }
 
+            // 零延遲判定：只要 isTeacherWatching 是 true，點擊瞬間直接抓包扣心！
             if (gameState.isTeacherWatching) {
-                // 被抓包
                 gameState.lives--;
                 gameState.combo = 0;
                 triggerFlash();
@@ -426,7 +422,6 @@
                     endGame(false);
                 }
             } else {
-                // 順利抄寫，根據 Combo 額外加分
                 gameState.combo++;
                 let gain = 3 + Math.floor(gameState.combo / 5);
                 gameState.progress += gain;
@@ -461,10 +456,10 @@
             gameOverScreen.classList.remove('hidden');
             if (isWin) {
                 gameOverTitle.innerText = "🏆 完美神速通關！";
-                gameOverDesc.innerText = `太強了！在充滿假動作與手痠危機的地獄難度下竟然還能歐趴交卷，符符頒發你「抄霸」稱號！`;
+                gameOverDesc.innerText = `太強了！在零延遲嚴格盯哨與假動作干擾下順利交卷，符符頒發你「頂級抄霸」稱號！`;
             } else {
                 gameOverTitle.innerText = "💥 挑戰失敗！";
-                gameOverDesc.innerText = gameState.lives <= 0 ? "太輕敵了！被老師抓到直接沒收作業，回家吃竹筍炒肉絲！" : "時間到啦！手太痠加上進度沒趕完，只能去罰站了！";
+                gameOverDesc.innerText = gameState.lives <= 0 ? "被老師抓個正著！零延遲瞬間沒收作業，回家吃竹筍炒肉絲！" : "時間到啦！作業沒寫完，準備去罰站囉！";
             }
         }
     </script>
